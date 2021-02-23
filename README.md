@@ -26,6 +26,8 @@ Configs: You can open the code and change these constants depending on your exce
 
 > The **sample** folder has a sample excel sheet and its output file.
 
+The excel file can have many worksheets, each for a student. Once rubrics are set up in one sheet, it can be duplicated but right-clicking the sheet and selecting `move or copy`. The name of the sheet will be the name that shows up on the _feedback.txt_ file. 
+
 All question headings ( Example: **Question 1**, or **Question 2 (10 marks)** ) can be added to the HEADING_COLUMN. Any value in this column which is bold, will be printed to the _feedback.txt_ file as a heading. Any other non-bold text in this column is for marker's reference only (example: File format should be .pdf). 
 
 The next columns could be anything that is needed for  marker's reference. There can, for instance, be columns for sub-heading, max marks, marks achieved etc. 

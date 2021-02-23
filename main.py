@@ -4,8 +4,8 @@ import sys
 
 # Some constants 
 HEADINGS_COLUMN = 'A'
-FEEDBACK_COLUMN = 'E'
-MAX_ROWS_TO_CHECK = 90 # efficiency
+FEEDBACK_COLUMN = 'D'
+MAX_ROWS_TO_CHECK = 30 # efficiency
 
 def main():
     
@@ -29,7 +29,7 @@ def main():
         output += "<" + sheet.title + ">\n\n"
 
         # For each row in the sheet - Leave first heading row. 
-        for row in range(1, max_rows - 1):
+        for row in range(1, max_rows):
             # Get the heading and feedback cells in the current row
             current_heading_cell = sheet[HEADINGS_COLUMN][row]
             current_feedback_cell = sheet[FEEDBACK_COLUMN][row]
