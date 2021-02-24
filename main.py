@@ -21,6 +21,9 @@ def main():
 
     running_total = 0
 
+    # Comments for 1 question 
+    question_comments = ""
+
     # Loop through all worksheets in the workbook
     for sheet in wb.worksheets:
   
@@ -35,28 +38,39 @@ def main():
             # Get the heading and feedback cells in the current row
             current_heading_cell = sheet[HEADINGS_COLUMN][row]
             current_feedback_cell = sheet[FEEDBACK_COLUMN][row]
-            
+
             # Check if we have a heading => the font will be bold
             if current_heading_cell.font.bold and current_heading_cell.value is not None and str(current_heading_cell.value).strip().lower() != 'total':     
-                output += "\n\n" + current_heading_cell.value + ":\n"
+                # Add question comments to the output only if it has some feedback
+                if question_comments != "" and not question_comments.endswith("--\n"):
+                    output += question_comments
+
+                question_comments = "\n\n" + current_heading_cell.value + ":\n"
 
                 # After each heading, underline with 'n' hyphens 
                 for _ in range(0, len(current_heading_cell.value)):
-                    output += "-"
+                    question_comments += "-"
 
-                output +="\n"                
+                question_comments +="\n"                
 
 
             #  If the feedback coloumn is not None, we can latee print it to file.   
             if current_feedback_cell.value is not None:
-                output += current_feedback_cell.value + "\n"
+                question_comments += current_feedback_cell.value + "\n"
 
             # Print total marks 
             if str(current_heading_cell.value).strip().lower() == 'total':
                 total = sheet[chr(ord(FEEDBACK_COLUMN) - 1)][row].value
                 running_total += total
 
-                output += "\n\n\n TOTAL: " + str(total)
+
+         # Add question comments to the output only if it has some feedback
+        if question_comments != "" and not question_comments.endswith("--\n"):
+            output += question_comments
+            question_comments = ""
+
+        # Add total to the end
+        output += "\n\n\n TOTAL: " + str(total)    
 
         output += "\n\n\n=====================================\n\n\n"
     
