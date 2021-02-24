@@ -4,8 +4,8 @@ import sys
 
 # Some constants 
 HEADINGS_COLUMN = 'A'
-FEEDBACK_COLUMN = 'D'
-MAX_ROWS_TO_CHECK = 30 # efficiency
+FEEDBACK_COLUMN = 'E'
+MAX_ROWS_TO_CHECK = 90 # efficiency
 
 def main():
     
@@ -18,6 +18,8 @@ def main():
 
     # write this to the final txt file
     output = ""
+
+    running_total = 0
 
     # Loop through all worksheets in the workbook
     for sheet in wb.worksheets:
@@ -51,10 +53,21 @@ def main():
 
             # Print total marks 
             if str(current_heading_cell.value).strip().lower() == 'total':
-                output += "\n\n\n TOTAL: " + str(sheet[chr(ord(FEEDBACK_COLUMN) - 1)][row].value)
+                total = sheet[chr(ord(FEEDBACK_COLUMN) - 1)][row].value
+                running_total += total
+
+                output += "\n\n\n TOTAL: " + str(total)
 
         output += "\n\n\n=====================================\n\n\n"
     
+    # Statistics 
+    #=====================================================
+    # Average = running total / total sheets - 1.
+    # total sheets - 1 since 1 sheet is the empty rubric sheet. 
+    avg = round(running_total / (len(wb.sheetnames) - 1), 2)
+    output = f"Statistics\n==========\n\nTotal: {(len(wb.sheetnames) - 1)}\nAverage: {avg}\n\n\n=====================================\n{output}"
+    #=====================================================
+
     if write_to_file(output) == 0:
         print('Success')
     else:
