@@ -77,10 +77,13 @@ def write_to_file(content):
     '''
     Writes to a txt file and returns 0, if an Exception occurs, returns 1
     '''
-    
+
+    # Output the file to the same folder as the input file with file name as inputFileName_feedback.txt
+    output_file = sys.argv[1][0: sys.argv[1].rfind(".")]
+
     try:
         # open a new file in write mide 
-        with open("feedback.txt", "w") as text_file:
+        with open(output_file + "_feedback.txt", "w") as text_file:
             text_file.write(content)
         
         return 0
