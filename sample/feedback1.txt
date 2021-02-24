@@ -1,0 +1,89 @@
+Statistics
+==========
+
+Total: 3
+Average: 46.5
+
+
+=====================================
+<Student 1>
+
+
+
+Question 1 (10):
+---------------
+ -1 Not like this
+ -1 Blah blah
+
+
+Question 2 (20):
+---------------
+ -20 not submitted
+
+
+Question 3 (30):
+---------------
+ -5 this is wrong, -10 this too, and -5 this as well
+
+
+
+ TOTAL: 31
+
+
+=====================================
+
+
+<Student 2>
+
+
+
+Question 1 (10):
+---------------
+ -1 Not like this
+ -1 Blah blah
+
+
+Question 2 (20):
+---------------
+ -20 not submitted
+
+
+Question 3 (30):
+---------------
+ -5 this is wrong, -10 this too, and -5 this as well
+
+
+
+ TOTAL: 31
+
+
+=====================================
+
+
+<Student 3>
+
+
+
+Question 1 (10):
+---------------
+ -1 Not like this
+ -1 Blah blah
+
+
+Question 2 (20):
+---------------
+ -20 not submitted
+
+
+Question 3 (30):
+---------------
+ -5 this is wrong, -10 this too, and -5 this as well
+
+
+
+ TOTAL: 31
+
+
+=====================================
+
+
