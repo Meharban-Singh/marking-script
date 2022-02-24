@@ -5,7 +5,7 @@ import sys
 # Some constants 
 HEADINGS_COLUMN = 'A'
 FEEDBACK_COLUMN = 'E'
-MAX_ROWS_TO_CHECK = 90 # efficiency
+MAX_ROWS_TO_CHECK = 60 # efficiency
 
 def main():
     
@@ -56,7 +56,7 @@ def main():
 
             #  If the feedback coloumn is not None, we can latee print it to file.   
             if current_feedback_cell.value is not None:
-                question_comments += current_feedback_cell.value + "\n"
+                question_comments += str(current_feedback_cell.value) + "\n"
 
             # Print total marks 
             if str(current_heading_cell.value).strip().lower() == 'total':
