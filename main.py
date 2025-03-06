@@ -4,8 +4,9 @@ import sys
 
 # Some constants 
 HEADINGS_COLUMN = 'A'
-FEEDBACK_COLUMN = 'E'
-MAX_ROWS_TO_CHECK = 60 # efficiency
+FEEDBACK_COLUMN = 'D'
+MAX_ROWS_TO_CHECK = 75 # efficiency
+MAX_MARKS = 70
 
 def main():
     
@@ -26,6 +27,10 @@ def main():
 
     # Loop through all worksheets in the workbook
     for sheet in wb.worksheets:
+
+        # If "total" is missing in the headings coloumn in the sheet, 
+        # uncomment the line below and add the cell location where "total" should exist instead of A72
+        # sheet['A72'].value = "total"
   
         # number of rows to check
         max_rows = min(MAX_ROWS_TO_CHECK, sheet.max_row)
@@ -70,7 +75,7 @@ def main():
             question_comments = ""
 
         # Add total to the end
-        output += "\n\n\n TOTAL: " + str(total)    
+        output += "\n\n\n TOTAL: " + str(total)  + "/" + str(MAX_MARKS) 
 
         output += "\n\n\n=====================================\n\n\n"
     
