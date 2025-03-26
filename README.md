@@ -1,16 +1,16 @@
-# Marking-script
-
-A marking script to conver the marking excel/google sheets to txt files in a nice format. Uses openpyxl to interact with the google sheets,
-
-Converts all worksheets in the excel workbook to nice looking format which can later be used to submit the feedback.
-
-## How to use
+# First time set up
 
 1. Install python 3. This should also install pip.
-2. Download the code - main.py is the only file that is needed.
+2. Download the code.
 3. In the code directory, run `pip install openpyxl`
-4. Run `python main.py <excel sheet file path>`.
-5. This will create a **feedback.txt** file in the working directory.
+
+# Main Script
+
+Converts the marking excel/google sheets to txt files in a nice format, and adds statistics + student totals to the source excel file. 
+ 
+## How to use
+
+Run `python main.py <excel sheet file path>`.
 
 ## Script settings
 
@@ -37,3 +37,11 @@ All feedback for a certain question(or a question's sub-part) is to be written i
 Any more columns can be added for marker's reference.
 
 The HEADING_COLUMN can have a value 'total' (should NOT be bold) and if it does, it will add the total of all the questions to the _feedback.txt_ file (total will be grabbed from the column that comes before the FEEDBACK_COLUMN). So its a goooood idea to have the marks achieved column right before the FEEDBACK_COLUMN. See sample folder for examples. 
+
+# Update Script
+
+Creates a new duplicated excel file where a set range of cells from one source sheet are copied over to all the other sheets in the workbook. Useful when there is a need to update marks rubrics for all students after part-marking. 
+ 
+## How to use
+
+Run `python update.py <excel sheet file path>`.
