@@ -1,12 +1,14 @@
 import openpyxl as xl
 from openpyxl.styles import Font
+import uuid
 import sys
+import re
 
-# Some constants 
 HEADINGS_COLUMN = 'A'
-FEEDBACK_COLUMN = 'D'
-MAX_ROWS_TO_CHECK = 75 # efficiency
-MAX_MARKS = 70
+FEEDBACK_COLUMN = 'E'
+MAX_ROWS_TO_CHECK = 80 # efficiency
+MAX_MARKS = 50
+EXISTING_WORKSHEET_NAMES = ['Notes', 'Template'] # Ignores these in the Summary sheet
 
 def main():
     
@@ -17,29 +19,25 @@ def main():
     # Load Workbook with only data - no formulas
     wb = xl.load_workbook(sys.argv[1], data_only=True)
 
-    # write this to the final txt file
     output = ""
-
-    running_total = 0
-
-    # Comments for 1 question 
     question_comments = ""
+    all_students_information = []
 
-    # Loop through all worksheets in the workbook
     for sheet in wb.worksheets:
 
-        # If "total" is missing in the headings coloumn in the sheet, 
+        # Ignore all summary sheets
+        if re.match('^Summary(_.*)?$', sheet.title): 
+            continue
+
+        # If "total" is missing in the headings column in the sheet, 
         # uncomment the line below and add the cell location where "total" should exist instead of A72
         # sheet['A72'].value = "total"
   
-        # number of rows to check
-        max_rows = min(MAX_ROWS_TO_CHECK, sheet.max_row)
-
         # Add student name to the output
         output += "<" + sheet.title + ">\n\n"
 
-        # For each row in the sheet - Leave first heading row. 
-        for row in range(1, max_rows):
+        # Don't need to check the first heading row  
+        for row in range(1, MAX_ROWS_TO_CHECK):
             # Get the heading and feedback cells in the current row
             current_heading_cell = sheet[HEADINGS_COLUMN][row]
             current_feedback_cell = sheet[FEEDBACK_COLUMN][row]
@@ -66,8 +64,7 @@ def main():
             # Print total marks 
             if str(current_heading_cell.value).strip().lower() == 'total':
                 total = sheet[chr(ord(FEEDBACK_COLUMN) - 1)][row].value
-                running_total += total
-
+                all_students_information.append({"name": sheet.title, "total": total})
 
          # Add question comments to the output only if it has some feedback
         if question_comments != "" and not question_comments.endswith("--\n"):
@@ -76,38 +73,61 @@ def main():
 
         # Add total to the end
         output += "\n\n\n TOTAL: " + str(total)  + "/" + str(MAX_MARKS) 
-
         output += "\n\n\n=====================================\n\n\n"
-    
-    # Statistics 
-    #=====================================================
-    # Average = running total / total sheets - 1.
-    # total sheets - 1 since 1 sheet is the empty rubric sheet. 
-    avg = round(running_total / (len(wb.sheetnames) - 1), 2)
-    output = f"Statistics\n==========\n\nTotal: {(len(wb.sheetnames) - 1)}\nAverage: {avg}\n\n\n=====================================\n{output}"
-    #=====================================================
 
-    if write_to_file(output) == 0:
-        print('Success')
-    else:
-        print('Something went wrong!')
+    create_feedback_file(output) 
+    create_summary_worksheet(wb, all_students_information)
 
-def write_to_file(content):
-    '''
-    Writes to a txt file and returns 0, if an Exception occurs, returns 1
-    '''
+    print("Finished")
 
+def create_feedback_file(content : str):
     # Output the file to the same folder as the input file with file name as inputFileName_feedback.txt
-    output_file = sys.argv[1][0: sys.argv[1].rfind(".")]
+    output_file_name = sys.argv[1][0: sys.argv[1].rfind(".")] + "_feedback.txt"
 
     try:
-        # open a new file in write mide 
-        with open(output_file + "_feedback.txt", "w") as text_file:
+        # open a new file in write mode 
+        with open(output_file_name, "w") as text_file:
             text_file.write(content)
         
-        return 0
+        print(f"Feedback file '{output_file_name}' added successfully.")
     except Exception:
-        return 1
+        print('Something went wrong while creating feedback file!')
+
+def create_summary_worksheet(wb : xl.Workbook, all_students_information : list, summary_sheet_name : str = "Summary"):
+
+    # Generate a unique name if the summary sheet already exists
+    if summary_sheet_name in wb.sheetnames:
+        summary_sheet_name = f"Summary_{uuid.uuid4().hex[:8]}"
+    
+    # Create a new summary sheet
+    summary_sheet = wb.create_sheet(summary_sheet_name)
+    summary_sheet.append(["Name", "Total Marks"])
+    
+    running_total = 0
+    total_students = 0
+
+    for student_info in all_students_information:
+        name = student_info.get("name", "unknown")
+
+        if name in EXISTING_WORKSHEET_NAMES: 
+            continue
+
+        total = student_info.get("total", "unknown")
+        summary_sheet.append([name, total])
+        running_total += total
+        total_students += 1
+
+    summary_sheet.append([])
+
+    avg = round(running_total / total_students, 2)
+    summary_sheet.append(["Average", avg])
+    
+    percentage = (avg / MAX_MARKS) * 100
+    summary_sheet.append(["Percentage", percentage])
+    
+    # Save the workbook in the same workbook
+    wb.save(sys.argv[1])
+    print(f"Summary sheet '{summary_sheet_name}' added successfully.")
 
 
 # run main method if the current file is run
