@@ -5,8 +5,8 @@ import sys
 import re
 
 HEADINGS_COLUMN = 'A'
-FEEDBACK_COLUMN = 'E'
-MAX_ROWS_TO_CHECK = 80 # efficiency
+FEEDBACK_COLUMN = 'D'
+MAX_ROWS_TO_CHECK = 70 # efficiency
 MAX_MARKS = 50
 EXISTING_WORKSHEET_NAMES = ['Notes', 'Template'] # Ignores these in the Summary sheet
 
@@ -23,11 +23,15 @@ def main():
     question_comments = ""
     all_students_information = []
 
-    for sheet in wb.worksheets:
-
-        # Ignore all summary sheets
-        if re.match('^Summary(_.*)?$', sheet.title): 
-            continue
+    # Filter out summary sheets to get accurate count for progress bar
+    worksheets_to_process = [sheet for sheet in wb.worksheets if not re.match('^Summary(_.*)?$', sheet.title)]
+    print(f"Processing {len(worksheets_to_process)} worksheets...")
+    
+    for i, sheet in enumerate(worksheets_to_process, 1):
+        # Simple progress indicator
+        progress_percent = (i / len(worksheets_to_process)) * 100
+        sys.stdout.flush()
+        sys.stdout.write(f"[{i}/{len(worksheets_to_process)}] ({progress_percent:.1f}%) Processing: {sheet.title}\n")
 
         # If "total" is missing in the headings column in the sheet, 
         # uncomment the line below and add the cell location where "total" should exist instead of A72
@@ -76,6 +80,7 @@ def main():
         output += "\n\n\n=====================================\n\n\n"
 
     create_feedback_file(output) 
+    sort_worksheets(wb)
     create_summary_worksheet(wb, all_students_information)
 
     print("Finished")
@@ -93,7 +98,22 @@ def create_feedback_file(content : str):
     except Exception:
         print('Something went wrong while creating feedback file!')
 
+def sort_worksheets(wb : xl.Workbook):
+
+    print("Sorting all worksheets by name...")
+    
+    # Sort all worksheets by name (case-insensitive) before saving
+    try:
+        wb._sheets.sort(key=lambda ws: ws.title.lower())
+        wb.save(sys.argv[1])
+        print("Worksheets sorted successfully.")
+
+    except Exception:
+        print("Worksheets sorting failed.")
+
 def create_summary_worksheet(wb : xl.Workbook, all_students_information : list, summary_sheet_name : str = "Summary"):
+
+    print("Creating marks-summary worksheet...")
 
     # Generate a unique name if the summary sheet already exists
     if summary_sheet_name in wb.sheetnames:
