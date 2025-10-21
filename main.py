@@ -1,3 +1,10 @@
+# Converts marked excel sheets into a text feedback file and creates a summary worksheet with total marks
+# Feedback format: 
+# <Student Name> [repo_name]
+# Feedback comments 
+# TOTAL: xx/50
+# =====================================
+
 import openpyxl as xl
 from openpyxl.styles import Font
 import uuid
@@ -9,6 +16,7 @@ FEEDBACK_COLUMN = 'D'
 MAX_ROWS_TO_CHECK = 70 # efficiency
 MAX_MARKS = 50
 EXISTING_WORKSHEET_NAMES = ['Notes', 'Template'] # Ignores these in the Summary sheet
+REPO_NAME_CELL = 'A1'  
 
 def main():
     
@@ -25,7 +33,7 @@ def main():
 
     # Filter out summary sheets to get accurate count for progress bar
     worksheets_to_process = [sheet for sheet in wb.worksheets if not re.match('^Summary(_.*)?$', sheet.title)]
-    print(f"Processing {len(worksheets_to_process)} worksheets...")
+    print(f"[1/3] Processing {len(worksheets_to_process)} worksheets...")
     
     for i, sheet in enumerate(worksheets_to_process, 1):
         # Simple progress indicator
@@ -33,12 +41,14 @@ def main():
         sys.stdout.flush()
         sys.stdout.write(f"[{i}/{len(worksheets_to_process)}] ({progress_percent:.1f}%) Processing: {sheet.title}\n")
 
+        repo_name = sheet[REPO_NAME_CELL].value if sheet[REPO_NAME_CELL].value is not None else "unknown_repo"
+
         # If "total" is missing in the headings column in the sheet, 
         # uncomment the line below and add the cell location where "total" should exist instead of A72
         # sheet['A72'].value = "total"
   
         # Add student name to the output
-        output += "<" + sheet.title + ">\n\n"
+        output += "<" + sheet.title + "> [" + repo_name + "]\n\n"
 
         # Don't need to check the first heading row  
         for row in range(1, MAX_ROWS_TO_CHECK):
@@ -100,7 +110,7 @@ def create_feedback_file(content : str):
 
 def sort_worksheets(wb : xl.Workbook):
 
-    print("Sorting all worksheets by name...")
+    print("[2/3] Sorting all worksheets by name...")
     
     # Sort all worksheets by name (case-insensitive) before saving
     try:
@@ -113,7 +123,7 @@ def sort_worksheets(wb : xl.Workbook):
 
 def create_summary_worksheet(wb : xl.Workbook, all_students_information : list, summary_sheet_name : str = "Summary"):
 
-    print("Creating marks-summary worksheet...")
+    print("[3/3] Creating marks-summary worksheet...")
 
     # Generate a unique name if the summary sheet already exists
     if summary_sheet_name in wb.sheetnames:

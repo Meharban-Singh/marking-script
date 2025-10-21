@@ -1,3 +1,6 @@
+# Updates all sheets in an Excel workbook by copying a specified range of cells from template sheet to all other sheets
+# Useful if there was a mistake in the template that needs to be corrected across all sheets
+
 import openpyxl as xl
 from openpyxl.utils import range_boundaries
 import sys 
