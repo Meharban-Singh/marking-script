@@ -13,8 +13,8 @@ import re
 
 HEADINGS_COLUMN = 'A'
 FEEDBACK_COLUMN = 'D'
-MAX_ROWS_TO_CHECK = 70 # efficiency
-MAX_MARKS = 50
+MAX_ROWS_TO_CHECK = 75 # efficiency
+MAX_MARKS = 70
 EXISTING_WORKSHEET_NAMES = ['Notes', 'Template'] # Ignores these in the Summary sheet
 REPO_NAME_CELL = 'A1'  
 
